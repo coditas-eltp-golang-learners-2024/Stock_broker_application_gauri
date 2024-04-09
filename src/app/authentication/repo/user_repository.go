@@ -8,4 +8,5 @@ type UserRepository interface {
     IsPhoneNumberExists(phoneNumber string) bool
     IsPancardNumberExists(pancardNumber string) bool
     InsertUser(user models.SignUpRequest) error
+    GetUserByEmail(email string) (*models.SignInRequest) 
 }

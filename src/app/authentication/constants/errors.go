@@ -20,4 +20,7 @@ var (
     ErrInvalidPhoneNumber   = errors.New("phone number should be 10 digits")
     ErrInvalidPancardNumber = errors.New("pancard number should contain only alphanumeric characters")
     ErrMissingPassword      = errors.New("password is required")
+
+    ErrUserNotFound         = errors.New("User not found")
+    ErrInvalidCredentials   =errors.New("Invalid credentals")
 )

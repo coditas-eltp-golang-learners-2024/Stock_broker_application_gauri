@@ -7,24 +7,31 @@ import (
 	"Stock_broker_application/handlers"
 	"Stock_broker_application/repo"
 	"Stock_broker_application/service"
-	"database/sql" 
+	"database/sql"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupRouter sets up the routes for the application
 func SetupRouter(db *sql.DB) *gin.Engine {
-    // Initialize Gin router
-    r := gin.Default()
+	// Initialize Gin router
+	r := gin.Default()
 
-    // Initialize UserRepository
-    userRepository := repo.NewUserRepositoryImpl(db)
+	// Initialize UserRepository
+	userRepository := repo.NewUserRepositoryImpl(db)
 
-    // Initialize SignUpService with UserRepository
-    userService := service.NewSignUpService(userRepository)
+	// Initialize SignUpService with UserRepository
+	userService := service.NewSignUpService(userRepository)
 
-    // Define routes
-    r.POST(constants.SignUpRoute, handlers.SignUpHandler(userService))
+	// SignUp route
+	r.POST(constants.SignUpRoute, handlers.SignUpHandler(userService))
 
-    return r
+	
+	// Initialize SignInService with UserRepository
+	userAuthService := service.NewSignInService(userRepository)
+
+	//SignIn route
+	r.POST(constants.SignInRoute, handlers.SignInHandler(userAuthService))
+
+	return r
 }
