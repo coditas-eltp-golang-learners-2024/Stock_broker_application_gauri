@@ -1,8 +1,9 @@
 package repo
 
 import (
-    "Stock_broker_application/models"
-    "database/sql"
+	"Stock_broker_application/constants"
+	"Stock_broker_application/models"
+	"database/sql"
 )
 
 // UserRepositoryImpl is the implementation of UserRepository
@@ -52,9 +53,9 @@ func (r *UserRepositoryImpl) IsPancardNumberExists(pancardNumber string) bool {
 func (r *UserRepositoryImpl) InsertUser(user models.SignUpRequest) error {
     _, err := r.db.Exec("INSERT INTO users (name, email, phone_number, pancard_number, password) VALUES (?, ?, ?, ?, ?)",
         user.Name, user.Email, user.PhoneNumber, user.PancardNumber, user.Password)
-    if err != nil {
-        // Handle error
-        return err
-    }
+        if err != nil {
+            // Handle error
+            return constants.ErrDatabaseInsert
+        }    
     return nil
 }
