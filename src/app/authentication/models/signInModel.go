@@ -5,3 +5,6 @@ type SignInRequest struct {
 	Password      string `json:"password" validate:"required"`
 }
 
+func (SignInRequest) TableName() string {
+    return "users"
+}

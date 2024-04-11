@@ -1,6 +1,15 @@
 // handlers/signUpHandler.go
 package handlers
-
+// SignUpHandler handles the signup request
+// @Summary Handle signup request
+// @Description Handle signup request and create a new user
+// @Accept json
+// @Produce json
+// @Param request body SignUpRequest true "Sign up request body"
+// @Success 200 {object} gin.H{"message": "User signed up successfully"}
+// @Failure 400 {object} gin.H{"error": "Bad request"}
+// @Failure 500 {object} gin.H{"error": "Internal server error"}
+// @Router /signup [post]
 import (
     "Stock_broker_application/models"
     "Stock_broker_application/service"
