@@ -1,22 +1,24 @@
 package handlers
-// SignInHandler handles the signin request
-// @Summary Handle signin request
-// @Description Handle signin request and authenticate the user
-// @Accept json
-// @Produce json
-// @Param request body SignInRequest true "Sign in request body"
-// @Success 200 {object} gin.H{"message": "User signed in successfully"}
-// @Failure 400 {object} gin.H{"error": "Bad request"}
-// @Failure 401 {object} gin.H{"error": "Unauthorized"}
-// @Router /signin [post]
+
 import (
-    "Stock_broker_application/models"
-    "Stock_broker_application/service"
-    "github.com/gin-gonic/gin"
-    "net/http"
+	"Stock_broker_application/models"
+	"Stock_broker_application/service"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SignInHandler handles the sign-in request
+// @Summary Handle sign-in request
+// @Description Handle sign-in request and authenticate the user
+// @Accept json
+// @Produce json
+// @Param request body models.SignInRequest true "Sign-in request body"
+// @Success 200 {object} string "User authenticated successfully"
+// @Failure 400 {object} string "Bad request"
+// @Failure 401 {object} string "Unauthorized"
+// @Router /signin [post]
+
 func SignInHandler(userService *service.SignInService) gin.HandlerFunc {
     return func(c *gin.Context) {
         var signInRequest models.SignInRequest

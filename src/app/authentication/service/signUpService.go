@@ -10,43 +10,52 @@ import (
 
 // SignUpService handles the signup logic
 type SignUpService struct {
-    UserRepository repo.UserRepository
+	UserRepository repo.UserRepository
 }
 
 // NewSignUpService creates a new SignUpService with the provided repository
 func NewSignUpService(userRepository repo.UserRepository) *SignUpService {
-    return &SignUpService{
-        UserRepository: userRepository,
-        
-    }
+	return &SignUpService{
+		UserRepository: userRepository,
+	}
 }
 
 // SignUp processes the signup request
-func (s *SignUpService) SignUp(signUpRequest models.SignUpRequest) error {
-    // Validate the SignUpRequest struct
-    if err :=utils.ValidateSignUpRequest(signUpRequest); err != nil {
-        return err
-    }
+// @Summary Process signup request
+// @Description Process signup request and create a new user account
+// @Param signUpRequest body models.SignUpRequest true "Sign-up request body"
+// @Success 200 {string} string "User signed up successfully"
+// @Failure 400 {object} string "Bad request"
+// @Failure 409 {object} string "Conflict: Email/Phone"
+// @Failure 500 {object} string "Internal server error"
+// @Tags SignUp
+// @Router /signup [post]
 
-    // Check if email already exists
-    if s.UserRepository.IsEmailExists(signUpRequest.Email) {
-        return constants.ErrEmailExists
-    }
+func (service *SignUpService) SignUp(signUpRequest models.SignUpRequest) error {
+	// Validate the SignUpRequest struct
+	if err := utils.ValidateSignUpRequest(signUpRequest); err != nil {
+		return err
+	}
 
-    // Check if phone number already exists
-    if s.UserRepository.IsPhoneNumberExists(signUpRequest.PhoneNumber) {
-        return constants.ErrPhoneNumberExists
-    }
+	// Check if email already exists
+	if service.UserRepository.IsEmailExists(signUpRequest.Email) {
+		return constants.ErrEmailExists
+	}
 
-    // Check if pancard number already exists
-    if s.UserRepository.IsPancardNumberExists(signUpRequest.PancardNumber) {
-        return constants.ErrPancardExists
-    }
+	// Check if phone number already exists
+	if service.UserRepository.IsPhoneNumberExists(signUpRequest.PhoneNumber) {
+		return constants.ErrPhoneNumberExists
+	}
 
-    // Insert user into the database
-    if err := s.UserRepository.InsertUser(signUpRequest); err != nil {
-        return err
-    }
+	// Check if pancard number already exists
+	if service.UserRepository.IsPancardNumberExists(signUpRequest.PancardNumber) {
+		return constants.ErrPancardExists
+	}
 
-    return nil
+	// Insert user into the database
+	if err := service.UserRepository.InsertUser(signUpRequest); err != nil {
+		return err
+	}
+
+	return nil
 }
