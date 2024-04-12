@@ -12,6 +12,30 @@ definitions:
     - email
     - password
     type: object
+  models.SignUpRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      name:
+        example: John
+        type: string
+      pancardNumber:
+        example: ABCDE1234F
+        type: string
+      password:
+        example: password123
+        type: string
+      phoneNumber:
+        example: "1234567890"
+        type: string
+    required:
+    - email
+    - name
+    - pancardNumber
+    - password
+    - phoneNumber
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -21,26 +45,58 @@ info:
 paths:
   /signin:
     post:
-      description: Authenticate a user with the provided credentials
+      consumes:
+      - application/json
+      description: Handle sign-in request and authenticate the user
       parameters:
       - description: Sign-in request body
         in: body
-        name: signInRequest
+        name: request
         required: true
         schema:
           $ref: '#/definitions/models.SignInRequest'
+      produces:
+      - application/json
       responses:
         "200":
           description: User authenticated successfully
           schema:
             type: string
         "400":
-          description: Invalid input
+          description: Bad request
           schema:
             type: string
-        "404":
-          description: User not found
+        "401":
+          description: Unauthorized
           schema:
             type: string
-      summary: Authenticate user
+      summary: Handle sign-in request
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Handle signup request and create a new user
+      parameters:
+      - description: Sign up request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User signed up successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Handle signup request
 swagger: "2.0"

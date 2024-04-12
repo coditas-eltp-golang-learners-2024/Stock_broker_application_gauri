@@ -1,25 +1,24 @@
 package handlers
 
+
+import (
+	"Stock_broker_application/models"
+	"Stock_broker_application/service"
+	"net/http"
+	"github.com/gin-gonic/gin"
+)
+
+// SignUpHandler handles the signup request
 // SignUpHandler handles the signup request
 // @Summary Handle signup request
 // @Description Handle signup request and create a new user
 // @Accept json
 // @Produce json
 // @Param request body models.SignUpRequest true "Sign up request body"
-// @Success 200 {object} gin.H{"message": "User signed up successfully"}
-// @Failure 400 {object} gin.H{"error": "Bad request"}
-// @Failure 500 {object} gin.H{"error": "Internal server error"}
-
+// @Success 200 {object} string "User signed up successfully"
+// @Failure 400 {object} string "Bad request"
+// @Failure 500 {object}  string "Internal server error"
 // @Router /signup [post]
-import (
-	"Stock_broker_application/models"
-	"Stock_broker_application/service"
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-)
-
-// SignUpHandler handles the signup request
 func SignUpHandler(userService *service.SignUpService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var signUpRequest models.SignUpRequest

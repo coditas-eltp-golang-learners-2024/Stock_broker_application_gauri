@@ -17,12 +17,18 @@ const docTemplate = `{
     "paths": {
         "/signin": {
             "post": {
-                "description": "Authenticate a user with the provided credentials",
-                "summary": "Authenticate user",
+                "description": "Handle sign-in request and authenticate the user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Handle sign-in request",
                 "parameters": [
                     {
                         "description": "Sign-in request body",
-                        "name": "signInRequest",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -38,13 +44,56 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Invalid input",
+                        "description": "Bad request",
                         "schema": {
                             "type": "string"
                         }
                     },
-                    "404": {
-                        "description": "User not found",
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/signup": {
+            "post": {
+                "description": "Handle signup request and create a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Handle signup request",
+                "parameters": [
+                    {
+                        "description": "Sign up request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.SignUpRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User signed up successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
                         "schema": {
                             "type": "string"
                         }
@@ -68,6 +117,38 @@ const docTemplate = `{
                 "password": {
                     "type": "string",
                     "example": "password123"
+                }
+            }
+        },
+        "models.SignUpRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "pancardNumber",
+                "password",
+                "phoneNumber"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john@example.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "pancardNumber": {
+                    "type": "string",
+                    "example": "ABCDE1234F"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "phoneNumber": {
+                    "type": "string",
+                    "example": "1234567890"
                 }
             }
         }
