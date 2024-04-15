@@ -1,18 +1,25 @@
-// src/app/authentication/main.go
-
 package main
 
 import (
-    "Stock_broker_application/utils/db"
     "Stock_broker_application/router"
+    "Stock_broker_application/utils/db"
     "log"
 )
 
+// @title Stock Broker Application API
+// @version 1.0
+// @description API endpoints for a stock broker application
+// @host localhost:8080
+// @BasePath /
 func main() {
     // Initialize database
     db.InitDB()
-    // Your application logic here...
-    log.Println("Database connection initialized. Starting application...")
-    r := route.SetupRouter()
-    r.Run("localhost:8080")
+
+    // Setup router with the database connection
+    r := router.SetupRouter(db.DB)
+
+    // Run the server
+    if err := r.Run(":8080"); err != nil {
+        log.Fatalf("Failed to start server: %v", err)
+    }
 }

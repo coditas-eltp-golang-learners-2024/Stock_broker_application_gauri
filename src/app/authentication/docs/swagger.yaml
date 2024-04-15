@@ -1,0 +1,102 @@
+basePath: /
+definitions:
+  models.SignInRequest:
+    properties:
+      email:
+        example: johndoe@.com
+        type: string
+      password:
+        example: password123
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.SignUpRequest:
+    properties:
+      email:
+        example: john@example.com
+        type: string
+      name:
+        example: John
+        type: string
+      pancardNumber:
+        example: ABCDE1234F
+        type: string
+      password:
+        example: password123
+        type: string
+      phoneNumber:
+        example: "1234567890"
+        type: string
+    required:
+    - email
+    - name
+    - pancardNumber
+    - password
+    - phoneNumber
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API endpoints for a stock broker application
+  title: Stock Broker Application API
+  version: "1.0"
+paths:
+  /signin:
+    post:
+      consumes:
+      - application/json
+      description: Handle sign-in request and authenticate the user
+      parameters:
+      - description: Sign-in request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignInRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User authenticated successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      summary: Handle sign-in request
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Handle signup request and create a new user
+      parameters:
+      - description: Sign up request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.SignUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User signed up successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Handle signup request
+swagger: "2.0"
