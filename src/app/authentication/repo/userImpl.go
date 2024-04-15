@@ -6,7 +6,14 @@ import (
 
 	"gorm.io/gorm"
 )
-
+// UserRepository defines methods for interacting with user data in the database
+type UserRepository interface {
+	IsEmailExists(email string) bool
+	IsPhoneNumberExists(phoneNumber string) bool
+	IsPancardNumberExists(pancardNumber string) bool
+	InsertUser(user models.SignUpRequest) error
+	GetUserByEmail(email string) *models.SignInRequest
+}
 // UserRepositoryImpl is the implementation of UserRepository
 type UserRepositoryImpl struct {
 	db *gorm.DB
