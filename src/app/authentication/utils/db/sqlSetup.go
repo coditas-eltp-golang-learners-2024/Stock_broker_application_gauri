@@ -1,17 +1,14 @@
-// src/app/authentication/utils/db/sqlSetup.go
-
 package db
 
 import (
-    "database/sql"
-    "fmt"
-    "log"
-    "Stock_broker_application/utils"
-   "Stock_broker_application/constants"
-    _ "github.com/go-sql-driver/mysql" // MySQL driver
+	"Stock_broker_application/utils"
+	"fmt"
+	"log"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
-var DB *sql.DB
+var DB *gorm.DB
 
 func InitDB() {
     // Load configuration
@@ -27,15 +24,22 @@ func InitDB() {
     )
 
     var err error
-    DB, err = sql.Open("mysql", connectionString)
+    DB, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{})
     if err != nil {
-        log.Fatalf("Error connecting to database: %v",constants.ErrDatabaseConnection)
+        log.Fatalf("Error connecting to database: %v", err)
     }
 
     // Test the connection
-    err = DB.Ping()
+    sqlDB, err := DB.DB()
     if err != nil {
-        log.Fatalf("Error pinging database: %v",constants.ErrDatabasePing)
+        log.Fatalf("Error getting underlying DB: %v", err)
     }
+   // defer sqlDB.Close()
+
+    err = sqlDB.Ping()
+    if err != nil {
+        log.Fatalf("Error pinging database: %v", err)
+    }
+
     log.Println("Connected to database")
 }

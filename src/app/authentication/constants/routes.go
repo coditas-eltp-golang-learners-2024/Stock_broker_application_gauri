@@ -1,4 +1,6 @@
 package constants
+
 const (
-    SignUpRoute = "/signUp"
+	SignUpRoute = "/signup"
+	SignInRoute = "/signin"
 )

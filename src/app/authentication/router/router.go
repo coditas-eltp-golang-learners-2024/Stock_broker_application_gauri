@@ -1,30 +1,39 @@
-// route/router.go
-
-package route
+package router
 
 import (
 	"Stock_broker_application/constants"
+	_ "Stock_broker_application/docs"
 	"Stock_broker_application/handlers"
 	"Stock_broker_application/repo"
 	"Stock_broker_application/service"
-	"database/sql" 
-
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
 // SetupRouter sets up the routes for the application
-func SetupRouter(db *sql.DB) *gin.Engine {
-    // Initialize Gin router
-    r := gin.Default()
+// @title Stock Broker Application API
+// @description API endpoints for a stock broker application
+// @version 1.0
+// @host localhost:8080
+// @BasePath /
+func SetupRouter(db *gorm.DB) *gin.Engine {
+	// Initialize Gin router
+	r := gin.Default()
 
-    // Initialize UserRepository
-    userRepository := repo.NewUserRepositoryImpl(db)
+	// Initialize UserRepository
+	userRepository := repo.NewUserRepositoryImpl(db)
 
-    // Initialize SignUpService with UserRepository
-    userService := service.NewSignUpService(userRepository)
+	// Initialize SignUpService with UserRepository
+	userService := service.NewSignUpService(userRepository)
 
-    // Define routes
-    r.POST(constants.SignUpRoute, handlers.SignUpHandler(userService))
+	// Initialize SignInService with UserRepository
+	userAuthService := service.NewSignInService(userRepository)
 
-    return r
+	r.POST(constants.SignUpRoute, handlers.SignUpHandler(userService))
+	r.POST(constants.SignInRoute, handlers.SignInHandler(userAuthService))
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	return r
 }
