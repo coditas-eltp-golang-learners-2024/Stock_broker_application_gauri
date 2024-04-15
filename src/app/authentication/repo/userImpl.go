@@ -17,26 +17,26 @@ func NewUserRepositoryImpl(db *gorm.DB) *UserRepositoryImpl {
 	return &UserRepositoryImpl{db: db}
 }
 
-func (r *UserRepositoryImpl) IsEmailExists(email string) bool {
+func (repo *UserRepositoryImpl) IsEmailExists(email string) bool {
 	var count int64
-	r.db.Model(&models.SignUpRequest{}).Where("email = ?", email).Count(&count)
+	repo.db.Model(&models.SignUpRequest{}).Where("email = ?", email).Count(&count)
 	return count > 0
 }
 
-func (r *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber string) bool {
+func (repo *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber string) bool {
 	var count int64
-	r.db.Model(&models.SignUpRequest{}).Where("phone_number = ?", phoneNumber).Count(&count)
+	repo.db.Model(&models.SignUpRequest{}).Where("phone_number = ?", phoneNumber).Count(&count)
 	return count > 0
 }
 
-func (r *UserRepositoryImpl) IsPancardNumberExists(pancardNumber string) bool {
+func (repo *UserRepositoryImpl) IsPancardNumberExists(pancardNumber string) bool {
 	var count int64
-	r.db.Model(&models.SignUpRequest{}).Where("pancard_number = ?", pancardNumber).Count(&count)
+	repo.db.Model(&models.SignUpRequest{}).Where("pancard_number = ?", pancardNumber).Count(&count)
 	return count > 0
 }
 
-func (r *UserRepositoryImpl) InsertUser(user models.SignUpRequest) error {
-	err := r.db.Create(&models.SignUpRequest{
+func (repo *UserRepositoryImpl) InsertUser(user models.SignUpRequest) error {
+	err := repo.db.Create(&models.SignUpRequest{
 		Name:          user.Name,
 		Email:         user.Email,
 		PhoneNumber:   user.PhoneNumber,
@@ -50,9 +50,9 @@ func (r *UserRepositoryImpl) InsertUser(user models.SignUpRequest) error {
 	return nil
 }
 
-func (r *UserRepositoryImpl) GetUserByEmail(email string) *models.SignInRequest {
+func (repo *UserRepositoryImpl) GetUserByEmail(email string) *models.SignInRequest {
 	var user models.SignInRequest
-	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil
 		}
