@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  models.OTPRequest:
+    properties:
+      email:
+        type: string
+      otp:
+        type: string
+      otp_created_at:
+        type: string
+    type: object
   models.SignInRequest:
     properties:
       email:
@@ -99,4 +108,34 @@ paths:
           schema:
             type: string
       summary: Handle signup request
+  /validateotp:
+    post:
+      consumes:
+      - application/json
+      description: Validates the OTP for a user
+      parameters:
+      - description: OTP Request
+        in: body
+        name: otpRequest
+        required: true
+        schema:
+          $ref: '#/definitions/models.OTPRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OTP validated successfully
+          schema:
+            type: string
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "401":
+          description: OTP is expired or invalid
+          schema:
+            type: string
+      summary: Validate OTP
+      tags:
+      - OTP
 swagger: "2.0"

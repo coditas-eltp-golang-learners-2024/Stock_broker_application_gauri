@@ -8,6 +8,15 @@ import (
 )
 
 // SignInHandler handles the sign-in request
+// @Summary Handle sign-in request
+// @Description Handle sign-in request and authenticate the user
+// @Accept json
+// @Produce json
+// @Param request body models.SignInRequest true "Sign-in request body"
+// @Success 200 {object} string "User authenticated successfully"
+// @Failure 400 {object} string "Bad request"
+// @Failure 401 {object} string "Unauthorized"
+// @Router /signin [post]
 func SignInHandler(userService *service.SignInService, otpService *service.OTPService) gin.HandlerFunc {
     return func(c *gin.Context) {
         var signInRequest models.SignInRequest

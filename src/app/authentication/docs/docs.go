@@ -100,9 +100,69 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/validateotp": {
+            "post": {
+                "description": "Validates the OTP for a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "OTP"
+                ],
+                "summary": "Validate OTP",
+                "parameters": [
+                    {
+                        "description": "OTP Request",
+                        "name": "otpRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OTPRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OTP validated successfully",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "OTP is expired or invalid",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.OTPRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                },
+                "otp_created_at": {
+                    "type": "string"
+                }
+            }
+        },
         "models.SignInRequest": {
             "type": "object",
             "required": [

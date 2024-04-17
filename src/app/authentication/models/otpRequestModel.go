@@ -3,8 +3,8 @@ package models
 import "time"
 
 type OTPRequest struct {
-	Email           string    `json:"email"`
-	OTP             string    `json:"otp"`
+	Email           string    `json:"email"  validate:"required,email"`
+	OTP             string    `json:"otp" validate:"required"`
 	OTPCreationTime time.Time `json:"otp_created_at"`
 }
 
