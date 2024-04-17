@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
+	"time"
 	// "time"
 )
 
@@ -53,19 +54,24 @@ func generateRandomOTP() (string, error) {
     return otp, nil
 }
 
-// ValidateOTP validates the provided OTP for the given email.
+
+// ValidateOTP validates the provided OTP for the given email and checks if it has expired after 5 minutes.
 func (s *OTPService) ValidateOTP(email, providedOTP string) error {
-    // Retrieve the OTP from the database based on the provided email
-    savedOTP, err := s.UserRepository.GetOTPByEmail(email)
-    if err != nil {
-        return err
-    }
-    // Check if the provided OTP matches the saved OTP
-    if providedOTP != savedOTP {
-        return errors.New("invalid OTP")
-    }
+	// Retrieve the OTP and its creation time from the database based on the provided email
+	savedOTP, otpCreationTime, err := s.UserRepository.GetOTPByEmail(email)
+	if err != nil {
+		return err
+	}
 
-   
+	// Check if the provided OTP matches the saved OTP
+	if providedOTP != savedOTP {
+		return errors.New("invalid OTP")
+	}
 
-    return nil
+	// Check if the OTP has expired (e.g., 5 minutes after creation time)
+	if time.Since(otpCreationTime) > 5*time.Minute {
+		return errors.New("OTP has expired")
+	}
+
+	return nil
 }

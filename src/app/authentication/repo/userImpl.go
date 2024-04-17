@@ -3,8 +3,10 @@ package repo
 import (
 	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
+	
 	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -16,7 +18,7 @@ type UserRepository interface {
 	InsertUser(user models.SignUpRequest) error
 	GetUserByEmail(email string) *models.SignInRequest
 	SaveOTP(email string, newOTP string) error
-	GetOTPByEmail(email string) (string, error)
+	GetOTPByEmail(email string) (string, time.Time, error)
 	//UpdateOTP(email string, newOTP string) error
 }
 
@@ -92,35 +94,26 @@ func (repo *UserRepositoryImpl) SaveOTP(email string, newOTP string) error {
 	return nil
 }
 
-func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, error) {
-	var otp string
-	if err := repo.db.Table("users").Where("email = ?", email).Select("otp").Scan(&otp).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return "", constants.ErrUserNotFound
-		}
-		return "", err
+func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, time.Time, error) {
+	var otpData struct {
+		OTP             string     `db:"otp"`
+		OTPCreationTime mysql.NullTime `db:"otp_creation_time"`
 	}
 
-	return otp, nil
-}
-// func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, time.Time, error) {
-//     var otp models.OTPRequest
-//     if err := repo.db.Table("users").
-//         Select("otp, otp_creation_time").
-//         Where("email = ?", email).
-//         First(&otp).Error; err != nil {
-//         if err == gorm.ErrRecordNotFound {
-//             return "", time.Time{}, constants.ErrUserNotFound
-//         }
-//         return "", time.Time{}, err
-//     }
+	err := repo.db.Table("users").
+		Where("email = ?", email).
+		Select("otp, otp_creation_time").
+		Scan(&otpData).
+		Error
 
-//     return otp.OTP, otp.OTPCreationTime, nil
-// }
-// // UpdateOTP updates the OTP for the user with the given email
-// func (repo *UserRepositoryImpl) UpdateOTP(email string, newOTP string) error {
-//     if err := repo.db.Model(&models.OTPRequest{}).Where("email = ?", email).Update("otp", newOTP).Error; err != nil {
-//         return err
-//     }
-//     return nil
-// }
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return "", time.Time{}, constants.ErrUserNotFound
+		}
+		return "", time.Time{}, err
+	}
+
+	otpCreationTime := otpData.OTPCreationTime.Time
+
+	return otpData.OTP, otpCreationTime, nil
+}
