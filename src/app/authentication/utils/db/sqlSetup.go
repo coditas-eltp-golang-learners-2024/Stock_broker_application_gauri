@@ -10,6 +10,7 @@ import (
 
 var DB *gorm.DB
 
+
 func InitDB() {
     // Load configuration
     sqlConfig := utils.LoadConfig()

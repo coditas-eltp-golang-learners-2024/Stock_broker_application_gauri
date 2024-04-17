@@ -3,9 +3,13 @@ package repo
 import (
 	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
+	
+	"time"
 
+	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
 )
+
 // UserRepository defines methods for interacting with user data in the database
 type UserRepository interface {
 	IsEmailExists(email string) bool
@@ -13,7 +17,11 @@ type UserRepository interface {
 	IsPancardNumberExists(pancardNumber string) bool
 	InsertUser(user models.SignUpRequest) error
 	GetUserByEmail(email string) *models.SignInRequest
+	SaveOTP(email string, newOTP string) error
+	GetOTPByEmail(email string) (string, time.Time, error)
+	//UpdateOTP(email string, newOTP string) error
 }
+
 // UserRepositoryImpl is the implementation of UserRepository
 type UserRepositoryImpl struct {
 	db *gorm.DB
@@ -67,4 +75,45 @@ func (repo *UserRepositoryImpl) GetUserByEmail(email string) *models.SignInReque
 		return nil
 	}
 	return &user
+}
+func (repo *UserRepositoryImpl) SaveOTP(email string, newOTP string) error {
+	// Generate the new OTP creation time
+	otpCreationTime := time.Now().Add(time.Minute * 1)
+	otpCreationTime = otpCreationTime.Truncate(time.Second)
+
+	// Update the OTP column for the given email
+	if err := repo.db.Model(&models.OTPRequest{}).Where("email = ?", email).Update("otp", newOTP).Error; err != nil {
+		return err
+	}
+
+	// Update the OTP creation time column for the given email
+	if err := repo.db.Model(&models.OTPRequest{}).Where("email = ?", email).Update("otp_creation_time", otpCreationTime).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, time.Time, error) {
+	var otpData struct {
+		OTP             string     `db:"otp"`
+		OTPCreationTime mysql.NullTime `db:"otp_creation_time"`
+	}
+
+	err := repo.db.Table("users").
+		Where("email = ?", email).
+		Select("otp, otp_creation_time").
+		Scan(&otpData).
+		Error
+
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return "", time.Time{}, constants.ErrUserNotFound
+		}
+		return "", time.Time{}, err
+	}
+
+	otpCreationTime := otpData.OTPCreationTime.Time
+
+	return otpData.OTP, otpCreationTime, nil
 }
