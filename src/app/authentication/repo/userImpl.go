@@ -3,7 +3,6 @@ package repo
 import (
 	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
-	
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -13,13 +12,12 @@ import (
 // UserRepository defines methods for interacting with user data in the database
 type UserRepository interface {
 	IsEmailExists(email string) bool
-	IsPhoneNumberExists(phoneNumber string) bool
+	IsPhoneNumberExists(phoneNumber int) bool
 	IsPancardNumberExists(pancardNumber string) bool
 	InsertUser(user models.SignUpRequest) error
 	GetUserByEmail(email string) *models.SignInRequest
-	SaveOTP(email string, newOTP string) error
-	GetOTPByEmail(email string) (string, time.Time, error)
-	//UpdateOTP(email string, newOTP string) error
+	SaveOTP(email string, newOTP int) error
+	GetOTPByEmail(email string) (int, time.Time, error)
 }
 
 // UserRepositoryImpl is the implementation of UserRepository
@@ -38,7 +36,7 @@ func (repo *UserRepositoryImpl) IsEmailExists(email string) bool {
 	return count > 0
 }
 
-func (repo *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber string) bool {
+func (repo *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber int) bool {
 	var count int64
 	repo.db.Model(&models.SignUpRequest{}).Where("phone_number = ?", phoneNumber).Count(&count)
 	return count > 0
@@ -76,16 +74,15 @@ func (repo *UserRepositoryImpl) GetUserByEmail(email string) *models.SignInReque
 	}
 	return &user
 }
-func (repo *UserRepositoryImpl) SaveOTP(email string, newOTP string) error {
-	// Generate the new OTP creation time
-	otpCreationTime := time.Now().Add(time.Minute * 1)
-	otpCreationTime = otpCreationTime.Truncate(time.Second)
+func (repo *UserRepositoryImpl) SaveOTP(email string, newOTP int) error {
 
 	// Update the OTP column for the given email
 	if err := repo.db.Model(&models.OTPRequest{}).Where("email = ?", email).Update("otp", newOTP).Error; err != nil {
 		return err
 	}
-
+	// Generate the new OTP creation time
+	otpCreationTime := time.Now()
+	otpCreationTime = otpCreationTime.Truncate(time.Second)
 	// Update the OTP creation time column for the given email
 	if err := repo.db.Model(&models.OTPRequest{}).Where("email = ?", email).Update("otp_creation_time", otpCreationTime).Error; err != nil {
 		return err
@@ -94,9 +91,9 @@ func (repo *UserRepositoryImpl) SaveOTP(email string, newOTP string) error {
 	return nil
 }
 
-func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, time.Time, error) {
+func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (int, time.Time, error) {
 	var otpData struct {
-		OTP             string     `db:"otp"`
+		OTP             int            `db:"otp"`
 		OTPCreationTime mysql.NullTime `db:"otp_creation_time"`
 	}
 
@@ -108,9 +105,9 @@ func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (string, time.Time, 
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return "", time.Time{}, constants.ErrUserNotFound
+			return 0, time.Time{}, constants.ErrUserNotFound
 		}
-		return "", time.Time{}, err
+		return 0, time.Time{}, err
 	}
 
 	otpCreationTime := otpData.OTPCreationTime.Time

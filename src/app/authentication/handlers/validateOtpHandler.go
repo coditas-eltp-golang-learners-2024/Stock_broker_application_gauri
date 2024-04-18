@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
 	"Stock_broker_application/service"
 	"net/http"
@@ -36,6 +37,6 @@ func ValidateOTPHandler(otpService *service.OTPService) gin.HandlerFunc {
 		}
 
 		// OTP validation successful
-		c.JSON(http.StatusOK, gin.H{"message": "OTP validated successfully"})
+		c.JSON(http.StatusOK, constants.SuccessMessageOTPValidated)
 	}
 }

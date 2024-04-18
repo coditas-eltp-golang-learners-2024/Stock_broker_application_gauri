@@ -4,7 +4,7 @@ import "time"
 
 type OTPRequest struct {
 	Email           string    `json:"email"  validate:"required,email"`
-	OTP             string    `json:"otp" validate:"required"`
+	OTP             int    `json:"otp" validate:"required"`
 	OTPCreationTime time.Time `json:"otp_created_at"`
 }
 
