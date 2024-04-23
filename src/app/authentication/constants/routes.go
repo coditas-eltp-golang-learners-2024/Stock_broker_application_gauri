@@ -1,7 +1,8 @@
 package constants
 
 const (
-	SignUpRoute      = "/signup"
-	SignInRoute      = "/signin"
-	ValidateOtpRoute = "/validateotp"
+	SignUpRoute         = "/signup"
+	SignInRoute         = "/signin"
+	ValidateOtpRoute    = "/validateotp"
+	ChangePasswordRoute = "/changepassword"
 )

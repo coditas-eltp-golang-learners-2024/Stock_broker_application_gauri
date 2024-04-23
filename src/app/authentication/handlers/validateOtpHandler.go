@@ -5,7 +5,6 @@ import (
 	"Stock_broker_application/models"
 	"Stock_broker_application/service"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,5 +37,27 @@ func ValidateOTPHandler(otpService *service.OTPService) gin.HandlerFunc {
 
 		// OTP validation successful
 		c.JSON(http.StatusOK, constants.SuccessMessageOTPValidated)
+		 // OTP validation successful, generate JWT token
+		 token, err :=service.GenerateJWT(otpRequest.Email) // Assuming email as userID for simplicity
+		 if err != nil {
+			 c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+			 return
+		 }
+ 
+		//  // Send JWT token back to client as a cookie
+		// c.SetCookie(&http.Cookie{
+		// 	Name:     "jwt_token",
+		// 	Value:    token,
+		// 	MaxAge:   3600,
+		// 	Path:     "/",
+		// 	Domain:   "localhost:8080",
+		// 	Secure:   false,
+		// 	HttpOnly: true,
+		// })
+
+		//  // You can also send a response indicating successful token generation if needed
+		  c.JSON(http.StatusOK, gin.H{"message": token})
+   
+
 	}
 }

@@ -56,3 +56,40 @@ func ValidateSignUpRequest(req models.SignUpRequest) error {
 
 	return nil
 }
+// ValidateChangePasswordRequest validates the ChangePassword struct
+func ValidateChangePasswordRequest(cp models.ChangePassword) error {
+    validate := validator.New()
+
+    // Validate the ChangePassword struct
+    if err := validate.Struct(cp); err != nil {
+        // If validation fails, return the corresponding error message
+        switch err.(type) {
+        case validator.ValidationErrors:
+            // Handle validation errors
+            for _, err := range err.(validator.ValidationErrors) {
+                switch err.Field() {
+                case "Email":
+                    if cp.Email == "" {
+                        return constants.ErrEmptyEmail
+                    }
+                    return constants.ErrInvalidEmail
+                case "Password":
+                    if cp.Password == "" {
+                        return constants.ErrEmptyPassword
+                    }
+                    return constants.ErrInvalidPassword
+                case "NewPassword":
+                    if cp.NewPassword == "" {
+                        return constants.ErrEmptyNewPassword
+                    }
+                    return constants.ErrInvalidNewPassword
+                }
+            }
+        default:
+            // Return a generic error if validation fails
+            return constants.ErrValidationFailed
+        }
+    }
+
+    return nil
+}

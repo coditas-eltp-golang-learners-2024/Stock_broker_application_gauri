@@ -3,10 +3,9 @@ package repo
 import (
 	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
-	"time"
-
 	"github.com/go-sql-driver/mysql"
 	"gorm.io/gorm"
+	"time"
 )
 
 // UserRepository defines methods for interacting with user data in the database
@@ -18,6 +17,8 @@ type UserRepository interface {
 	GetUserByEmail(email string) *models.SignInRequest
 	SaveOTP(email string, newOTP int) error
 	GetOTPByEmail(email string) (int, time.Time, error)
+	UpdatePassword(email string, newPassword string) error
+	CheckOldPassword(email string, password string) bool
 }
 
 // UserRepositoryImpl is the implementation of UserRepository
@@ -113,4 +114,16 @@ func (repo *UserRepositoryImpl) GetOTPByEmail(email string) (int, time.Time, err
 	otpCreationTime := otpData.OTPCreationTime.Time
 
 	return otpData.OTP, otpCreationTime, nil
+}
+func (repo *UserRepositoryImpl) UpdatePassword(email string, newPassword string) error {
+	if err := repo.db.Model(&models.ChangePassword{}).Where("email = ?", email).Update("password", newPassword).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repo *UserRepositoryImpl) CheckOldPassword(email string, password string) bool {
+	var count int64
+	repo.db.Model(&models.ChangePassword{}).Where("email = ? AND password = ?", email, password).Count(&count)
+	return count > 0
 }

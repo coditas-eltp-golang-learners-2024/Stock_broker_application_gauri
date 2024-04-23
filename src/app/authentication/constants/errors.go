@@ -29,8 +29,17 @@ var (
 	ErrEmptyPassword      = errors.New("password field cannot be empty")
 
 	// Other errors
-	ErrUserNotFound       = errors.New("user not found")
-	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrEmptyField         = errors.New("all required fields should be present")
-	ErrValidationFailed   = errors.New("validation failed")
+	ErrUserNotFound                      = errors.New("user not found")
+	ErrInvalidCredentials                = errors.New("invalid credentials")
+	ErrEmptyField                        = errors.New("all required fields should be present")
+	ErrValidationFailed                  = errors.New("validation failed")
+	ErrEmailOrPasswordVerificationFailed = errors.New("Email or password wrong")
+	ErrShouldHaveNewPassword             = errors.New("Please enter different password from old password")
+	ErrChangingPassword                  =errors.New("Password not changed")
+
+
+    ErrInvalidPassword    = errors.New("invalid password format")
+    ErrEmptyNewPassword   = errors.New("new password is required")
+    ErrInvalidNewPassword = errors.New("invalid new password format")
+
 )
