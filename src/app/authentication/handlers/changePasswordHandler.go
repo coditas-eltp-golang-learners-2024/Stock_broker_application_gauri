@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"Stock_broker_application/constants"
 	"Stock_broker_application/models"
 	"Stock_broker_application/service"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +14,7 @@ func ChangePasswordHandler(passwordService *service.PasswordService) gin.Handler
 		var userInput models.ChangePassword
 
 		if err := c.ShouldBindJSON(&userInput); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+			c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 			return
 		}
 
@@ -23,6 +23,6 @@ func ChangePasswordHandler(passwordService *service.PasswordService) gin.Handler
 			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
+		c.JSON(http.StatusOK, constants.SuccessMessage)
 	}
 }

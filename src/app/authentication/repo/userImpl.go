@@ -11,7 +11,7 @@ import (
 // UserRepository defines methods for interacting with user data in the database
 type UserRepository interface {
 	IsEmailExists(email string) bool
-	IsPhoneNumberExists(phoneNumber int) bool
+	IsPhoneNumberExists(phoneNumber uint64) bool
 	IsPancardNumberExists(pancardNumber string) bool
 	InsertUser(user models.SignUpRequest) error
 	GetUserByEmail(email string) *models.SignInRequest
@@ -37,7 +37,7 @@ func (repo *UserRepositoryImpl) IsEmailExists(email string) bool {
 	return count > 0
 }
 
-func (repo *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber int) bool {
+func (repo *UserRepositoryImpl) IsPhoneNumberExists(phoneNumber uint64) bool {
 	var count int64
 	repo.db.Model(&models.SignUpRequest{}).Where("phone_number = ?", phoneNumber).Count(&count)
 	return count > 0

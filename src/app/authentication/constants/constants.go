@@ -7,7 +7,7 @@ const (
 	ErrorMessageUnauthorized = "OTP is expired or invalid"
 	// SuccessMessageOTPValidated represents the success message for OTP validation
 	SuccessMessageOTPValidated = "OTP validated successfully"
-	successmessage="Password changed successfully"
+	SuccessMessage             = "Password changed successfully"
 )
 
 //secret key

@@ -5,35 +5,34 @@ import (
 	"Stock_broker_application/models"
 	"Stock_broker_application/repo"
 	"Stock_broker_application/utils"
-	"errors"
 )
 
 type PasswordService struct {
-	UserRepository repo.UserRepository
+	userRepository repo.UserRepository
 }
 
 func NewPasswordService(userRepository repo.UserRepository) *PasswordService {
 	return &PasswordService{
-		UserRepository: userRepository,
+		userRepository: userRepository,
 	}
 }
 
 // ChangePasswordService method in the service layer
 func (service *PasswordService) ChangePasswordService(userInput *models.ChangePassword) error {
 	if userInput.Password == userInput.NewPassword {
-		return errors.New("new password cannot be the same as the old password")
+		return constants.ErrNewPasswordSameAsOld
 	}
 
 	if err := utils.ValidateChangePasswordRequest(*userInput); err != nil {
-		return err
+		return constants.ErrInvalidChangeRequest
 	}
 
-	if !service.UserRepository.CheckOldPassword(userInput.Email, userInput.Password) {
+	if !service.userRepository.CheckOldPassword(userInput.Email, userInput.Password) {
 		return constants.ErrChangingPassword
 	}
 
-	if err := service.UserRepository.UpdatePassword(userInput.Email, userInput.NewPassword); err != nil {
-		return err
+	if err := service.userRepository.UpdatePassword(userInput.Email, userInput.NewPassword); err != nil {
+		return constants.ErrChangingPassword
 	}
 
 	return nil
